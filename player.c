@@ -1,10 +1,11 @@
 #include "player.h"
+#include "collision_tile.h"
 
 Player player;
 
 void InitPlayer()
 {
-    player.texture = LoadTexture("phantom_idle.png");  // 4-frame sprite sheet
+    player.texture = LoadTexture("phantom_move.png");  // 4-frame sprite sheet
     player.width = player.texture.width / 4;
     player.height = player.texture.height;
     player.position = (Vector2){ 100, 400 - player.height };
@@ -60,13 +61,21 @@ void playerKB()
 void playerUpdate()
 {
     player.velocity.y += GRAVITY;
-    player.position.y += player.velocity.y;
 
-    float groundY = 400;
+    // Predict next Y position
+    Vector2 nextPos = {
+        player.position.x,
+        player.position.y + player.velocity.y
+    };
 
-    if (player.position.y + player.height >= groundY)
-    {
-        player.position.y = groundY - player.height;
+    Rectangle nextRect = {
+        nextPos.x, nextPos.y,
+        player.width, player.height
+    };
+
+    if (!CheckCollisionWithMap(nextRect)) {
+        player.position.y = nextPos.y;
+    } else {
         player.velocity.y = 0;
         player.isJump = false;
     }
