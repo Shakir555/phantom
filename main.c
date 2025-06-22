@@ -8,9 +8,9 @@ int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Phantom");
     SetTargetFPS(60);
+
     InitPlayer();
 
-    // Define a 2D camera
     Camera2D camera = { 0 };
     camera.target = (Vector2){ player.position.x + player.width / 2, player.position.y + player.height / 2 };
     camera.offset = (Vector2){ SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
@@ -19,10 +19,9 @@ int main()
 
     while (!WindowShouldClose())
     {
-        playerKB();
-        playerCollision();
+        playerKB();         // Handle input
+        playerUpdate();     // Update physics
 
-        // Update camera to follow player
         camera.target = (Vector2){ player.position.x + player.width / 2, player.position.y + player.height / 2 };
 
         BeginDrawing();
@@ -30,12 +29,13 @@ int main()
 
         BeginMode2D(camera);
 
-        // Draw scrolling background and ground
-        DrawRectangle(-10000, 400, 20000, 50, DARKGRAY); // Infinite ground
-
+        DrawRectangle(-10000, 400, 20000, 50, DARKGRAY); // Ground
         DrawPlayer();
 
         EndMode2D();
+
+        // Debug text
+        DrawText(TextFormat("Y: %.2f  isJump: %s", player.position.y, player.isJump ? "true" : "false"), 10, 10, 20, BLACK);
 
         EndDrawing();
     }
