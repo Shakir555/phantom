@@ -3,18 +3,18 @@
 
 #include "raylib.h"
 
+#define SPEED 5
 #define GRAVITY 1.0f
 #define JUMP -20.0f
-#define SPEED 5.0f
 
-typedef struct Player 
-{
+typedef struct Player {
+    Texture2D texture;
     Vector2 position;
     Vector2 velocity;
-    float width;
-    float height;
+    int width;
+    int height;
     bool isJump;
-    Texture2D texture;
+    bool faceRight;
 } Player;
 
 extern Player player;
