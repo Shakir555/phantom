@@ -1,11 +1,11 @@
 #include "player.h"
-#include "collision_tile.h"
+#include "collision.h"
 
 Player player;
 
 void InitPlayer()
 {
-    player.texture = LoadTexture("phantom_move.png");  // 4-frame sprite sheet
+    player.texture = LoadTexture("img/phantom_move.png");
     player.width = player.texture.width / 4;
     player.height = player.texture.height;
     player.position = (Vector2){ 100, 400 - player.height };
@@ -14,45 +14,37 @@ void InitPlayer()
     player.faceRight = true;
     player.currentFrame = 0;
     player.frameCounter = 0;
-    player.frameSpeed = 10;  // frames per second
+    player.frameSpeed = 10;
 }
 
 void playerKB()
 {
     bool moving = false;
 
-    if (IsKeyDown(KEY_RIGHT))
-    {
+    if (IsKeyDown(KEY_RIGHT)) {
         player.position.x += SPEED;
         player.faceRight = true;
         moving = true;
     }
-    if (IsKeyDown(KEY_LEFT))
-    {
+
+    if (IsKeyDown(KEY_LEFT)) {
         player.position.x -= SPEED;
         player.faceRight = false;
         moving = true;
     }
 
-    if (IsKeyPressed(KEY_SPACE) && !player.isJump)
-    {
+    if (IsKeyPressed(KEY_SPACE) && !player.isJump) {
         player.velocity.y = JUMP;
         player.isJump = true;
     }
 
-    // Animate only when moving
-    if (moving)
-    {
+    if (moving) {
         player.frameCounter++;
-        if (player.frameCounter >= (60 / player.frameSpeed))
-        {
-            player.currentFrame++;
-            if (player.currentFrame > 3) player.currentFrame = 0;
+        if (player.frameCounter >= (60 / player.frameSpeed)) {
+            player.currentFrame = (player.currentFrame + 1) % 4;
             player.frameCounter = 0;
         }
-    }
-    else
-    {
+    } else {
         player.currentFrame = 0;
         player.frameCounter = 0;
     }
@@ -62,7 +54,6 @@ void playerUpdate()
 {
     player.velocity.y += GRAVITY;
 
-    // Predict next Y position
     Vector2 nextPos = {
         player.position.x,
         player.position.y + player.velocity.y
@@ -91,9 +82,8 @@ void DrawPlayer()
         (float)player.texture.height
     };
 
-    if (!player.faceRight)
-    {
-        sourceRec.width = -frameWidth;  // Flip horizontally if facing left
+    if (!player.faceRight) {
+        sourceRec.width = -frameWidth;
     }
 
     Rectangle destRec = {
